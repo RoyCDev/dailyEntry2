@@ -4,7 +4,7 @@ const journalSchema = z.object({
     description: z.string(),
     date: z.string().date(),
     mood: z.number().min(1).max(10),
-    activities: z.array(z.string())
+    activities: z.array(z.string()).optional()
 })
 
 export { journalSchema }

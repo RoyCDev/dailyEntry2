@@ -47,6 +47,12 @@ const updateJournal = async (request, response) => {
         if (journal && journal._id.toString() !== journalId)
             return response.status(409).json({ error: "you already have a journal for this date" })
 
+        const journalToModify = await Journal.findById(journalId)
+        if (!journalToModify)
+            return response.status(404).json({ error: "journal not found" })
+        if (journalToModify.user.toString() !== userId)
+            return response.status(403).json({ error: "you don't have permission to modify this journal" })
+
         const updatedJournal = await Journal.findByIdAndUpdate(journalId,
             { description, date, mood, activities },
             { new: true }
@@ -66,7 +72,6 @@ const deleteJournal = async (request, response) => {
         const journal = await Journal.findById(journalId)
         if (!journal)
             return response.status(404).json({ error: "journal not found" })
-
         if (journal.user.toString() !== userId)
             return response.status(403).json({ error: "you don't have permission to delete this journal" })
 
