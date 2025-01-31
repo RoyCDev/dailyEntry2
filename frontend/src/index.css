@@ -3,3 +3,7 @@
 @plugin "daisyui" {
     themes: nord
 }
+
+.hero-bg {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.25)), url("hero.jpg");
+}

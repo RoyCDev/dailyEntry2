@@ -18,6 +18,7 @@ const signUp = async (request, response) => {
             email, username, password: hashedPassword
         })
         await newUser.save()
+        generateToken(newUser._id, response)
         return response.status(201).json(newUser)
     }
 
@@ -54,4 +55,14 @@ const logout = async (request, response) => {
     }
 }
 
-export { signUp, login, logout }
+const authCheck = async (request, response) => {
+    try {
+        const user = request.user
+        return response.status(200).json(user)
+    } catch {
+        console.log("Error in authCheck controller", error.message);
+        return response.status(500).json({ error: "Internal server error" })
+    }
+}
+
+export { signUp, login, logout, authCheck }

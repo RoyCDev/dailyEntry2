@@ -10,8 +10,8 @@ const signUpSchema = z.object({
 })
 
 const loginSchema = z.object({
-    username: z.string(),
-    password: z.string()
+    username: z.string().nonempty(),
+    password: z.string().nonempty()
 })
 
 export { signUpSchema, loginSchema }

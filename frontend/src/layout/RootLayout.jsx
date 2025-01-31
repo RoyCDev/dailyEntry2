@@ -1,5 +1,6 @@
 import '@fontsource-variable/montserrat';
 import { Outlet, Link } from "react-router-dom";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 // icons for sidebar
 import { SiLivejournal } from "react-icons/si";
@@ -40,10 +41,24 @@ function RootLayout({ user }) {
         }
     ]
 
+    const queryClient = useQueryClient()
+    const { mutate: logout } = useMutation({
+        mutationFn: async () => {
+            const response = await fetch("/api/v1/auth/logout", {
+                method: "POST"
+            })
+            const data = await response.json()
+            return data
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["authUser"] })
+        }
+    })
+
     return (
         <div className="drawer lg:drawer-open font-[montserrat_variable]">
             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-            <div className="drawer-content">
+            <div className="drawer-content p-10">
                 {/* Page content here */}
                 <Outlet />
             </div>
@@ -93,7 +108,7 @@ function RootLayout({ user }) {
                                 <p className="text-xs">Today: {new Date().toLocaleDateString('en-US')}</p>
                             </div>
                             {user && <button className='text-2xl ml-auto'>
-                                <MdLogout />
+                                <MdLogout onClick={logout} />
                             </button>}
                         </div>
                     </li>
