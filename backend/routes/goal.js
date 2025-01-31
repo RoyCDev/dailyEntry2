@@ -1,7 +1,7 @@
 import { Router } from "express";
 import protectRoute from "../middleware/protectRoute.js"
 import { createGoal, getGoals, updateGoal, deleteGoal } from "../controllers/goal.js";
-import { goalSchema } from "../validators/goal.js"
+import { goalSchema } from "shared"
 import validateData from "../middleware/validateData.js"
 
 const router = Router()

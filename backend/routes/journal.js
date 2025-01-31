@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { createJournal, getJournal, updateJournal, deleteJournal } from "../controllers/journal.js"
 import protectRoute from "../middleware/protectRoute.js"
-import { journalSchema } from "../validators/journal.js"
+import { journalSchema } from "shared"
 import validateData from "../middleware/validateData.js"
 
 const router = Router()
