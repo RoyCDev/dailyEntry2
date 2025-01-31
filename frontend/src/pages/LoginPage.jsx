@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify"
+
 import Brand from "../components/common/Brand";
+import { loginSchema } from "shared"
 
 function LoginPage() {
     const [formFields, setFormFields] = useState({
@@ -17,36 +19,41 @@ function LoginPage() {
     const navigate = useNavigate()
     const queryClient = useQueryClient()
 
-    const { mutate: login } = useMutation({
+    const { mutate: login, isPending } = useMutation({
         mutationFn: async () => {
-            try {
-                const request = await fetch("/api/v1/auth/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formFields)
-                })
-                const data = await request.json()
-                if (!request.ok) {
-                    throw new Error(data.error || "Something went wrong")
-                }
-                return data
+            const request = await fetch("/api/v1/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formFields)
+            })
+            const data = await request.json()
+            if (!request.ok) {
+                throw data.error.name === "ZodError" ?
+                    data.error :
+                    new Error(data.error || "Something went wrong")
             }
-            catch (error) {
-                throw new Error(error)
-            }
+            return data
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["authUser"] })
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["authUser"] })
             navigate("/")
         },
         onError: (error) => {
-            toast.error(error.message)
+            error.issues ?
+                error.issues.forEach(e => toast.error(e.message)) :
+                toast.error(error.message)
         }
     })
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        login(formFields)
+        try {
+            loginSchema.parse(formFields)
+            login(formFields)
+        }
+        catch (error) {
+            error.issues.forEach(e => toast.error(e.message))
+        }
     }
 
     return (
@@ -89,7 +96,12 @@ function LoginPage() {
                             <p>Don&#39;t have an acocunt? {""}
                                 <Link to="/signup" className="underline">Create One</Link>
                             </p>
-                            <button className="btn btn-primary mt-8">Login</button>
+                            <button
+                                className="btn btn-primary mt-8"
+                                disabled={isPending}
+                            >
+                                Login
+                            </button>
                         </fieldset>
                     </form>
                 </div>

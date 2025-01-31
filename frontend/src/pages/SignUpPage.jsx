@@ -2,7 +2,10 @@ import { useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
 import Brand from "../components/common/Brand"
+import { signUpSchema } from "shared";
+import { BsFillInfoCircleFill } from "react-icons/bs";
 
 function SignUpPage() {
     const [page, setPage] = useState(1)
@@ -20,34 +23,41 @@ function SignUpPage() {
     const navigate = useNavigate()
     const queryClient = useQueryClient()
 
-    const { mutate: signUp } = useMutation({
+    const { mutate: signUp, isPending } = useMutation({
         mutationFn: async () => {
-            try {
-                const request = await fetch("/api/v1/auth/signup", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formFields)
-                })
-                const data = await request.json()
-                if (!request.ok) {
-                    throw new Error(data.error || "Something went wrong")
-                }
-                return data
+            const request = await fetch("/api/v1/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formFields)
+            })
+            const data = await request.json()
+            if (!request.ok) {
+                throw data.error.name === "ZodError" ?
+                    data.error :
+                    new Error(data.error || "Something went wrong")
             }
-            catch (error) {
-                throw new Error(error)
-            }
+            return data
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["authUser"] })
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["authUser"] })
             navigate("/")
         },
-        onError: (error) => toast.error(error.message)
+        onError: (error) => {
+            error.issues ?
+                error.issues.forEach(e => toast.error(e.message)) :
+                toast.error(error.message)
+        }
     })
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        signUp(formFields)
+        try {
+            signUpSchema.parse(formFields);
+            signUp(formFields);
+        }
+        catch (error) {
+            error.issues.forEach(e => toast.error(e.message))
+        }
     }
 
     return (
@@ -108,7 +118,8 @@ function SignUpPage() {
                         <form onSubmit={handleSubmit}>
                             <fieldset className="fieldset">
                                 <label className="fieldset-label" htmlFor="password">
-                                    Password
+                                    Password {""}
+                                    <span className="tooltip text-balance" data-tip="6 characters min, with at least 1 uppercase, 1 lowercase, and 1 number"><BsFillInfoCircleFill /></span>
                                 </label>
                                 <input
                                     className="input w-full"
@@ -140,7 +151,10 @@ function SignUpPage() {
                                     >
                                         Previous
                                     </button>
-                                    <button className="btn btn-primary mt-8 flex-1">
+                                    <button
+                                        className="btn btn-primary mt-8 flex-1"
+                                        disabled={isPending}
+                                    >
                                         Sign Up
                                     </button>
                                 </div>

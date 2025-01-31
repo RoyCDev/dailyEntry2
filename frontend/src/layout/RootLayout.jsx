@@ -1,9 +1,9 @@
 import '@fontsource-variable/montserrat';
 import { Outlet, Link } from "react-router-dom";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Brand from "../components/common/Brand"
 
 // icons for sidebar
-import { SiLivejournal } from "react-icons/si";
 import { IoMdDocument, IoMdFolder, IoIosCheckmarkCircle } from "react-icons/io";
 import { RiUserSearchFill } from "react-icons/ri";
 import { FaCarAlt } from "react-icons/fa";
@@ -65,13 +65,7 @@ function RootLayout({ user }) {
             <div className="drawer-side">
                 <ul className="menu bg-base-300 text-base-content min-h-full w-80 p-4 gap-3">
                     {/* Sidebar content here */}
-                    {/* brand */}
-                    <li>
-                        <Link to="/" className="font-bold flex items-center gap-1.5">
-                            <SiLivejournal className='text-2xl' />
-                            <span className='text-xl'>DailyEntry</span>
-                        </Link>
-                    </li>
+                    <li><Brand to="/" /></li>
 
                     {user && <li>
                         <p className='menu-title'>Navigations</p>
