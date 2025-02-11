@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import RootLayout from "./layout/RootLayout";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage"
+import JournalPage from "./pages/JournalPage/JournalPage";
 
 function App() {
     const { data: user, isLoading } = useQuery({
@@ -29,7 +30,10 @@ function App() {
     return (
         <Routes>
             {user ?
-                <Route path="*" element={<RootLayout user={user} />} />
+                <Route path="/" element={<RootLayout user={user} />}>
+                    <Route path="journal" element={<JournalPage />} />
+                    <Route path="*" element={<Navigate to="/" />} />
+                </Route>
                 :
                 <>
                     <Route path="login" element={<LoginPage />} />

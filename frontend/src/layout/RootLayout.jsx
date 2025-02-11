@@ -6,7 +6,7 @@ import Brand from "../components/common/Brand"
 // icons for sidebar
 import { IoMdDocument, IoMdFolder, IoIosCheckmarkCircle } from "react-icons/io";
 import { RiUserSearchFill } from "react-icons/ri";
-import { FaCarAlt } from "react-icons/fa";
+import { FaCarAlt, FaUserEdit } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
 
 function RootLayout({ user }) {
@@ -25,6 +25,11 @@ function RootLayout({ user }) {
             link: "/goal",
             icon: < IoIosCheckmarkCircle />,
             name: "Goals"
+        },
+        {
+            link: "/profile",
+            icon: <FaUserEdit />,
+            name: "Edit Profile"
         }
     ]
 
@@ -58,14 +63,16 @@ function RootLayout({ user }) {
     return (
         <div className="drawer lg:drawer-open font-[montserrat_variable]">
             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-            <div className="drawer-content p-10">
+            <div className="drawer-content p-5">
                 {/* Page content here */}
                 <Outlet />
             </div>
             <div className="drawer-side">
                 <ul className="menu bg-base-300 text-base-content min-h-full w-80 p-4 gap-3">
                     {/* Sidebar content here */}
-                    <li><Brand to="/" /></li>
+                    <li>
+                        <Link to="/"><Brand /></Link>
+                    </li>
 
                     {user && <li>
                         <p className='menu-title'>Navigations</p>
