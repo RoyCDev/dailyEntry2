@@ -21,7 +21,6 @@ function App() {
         retry: false
     })
 
-    console.log("authUser", user)
     if (isLoading)
         return (
             <div>Loading...</div>

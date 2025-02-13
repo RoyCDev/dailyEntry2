@@ -4,7 +4,7 @@ const journalSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     description: { type: String },
     date: { type: Date },
-    mood: { type: Number, min: 1, max: 10 },
+    mood: { type: Number, min: 1, max: 5 },
     activities: { type: [{ type: String }], default: [] }
 })
 

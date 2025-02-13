@@ -1,8 +1,13 @@
 import { useState } from "react";
-import { DayPicker } from "react-day-picker";
-import { FaSave } from "react-icons/fa";
+import { useMutation } from "@tanstack/react-query"
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import MoodRating from "./MoodRating"
 import ActivityList from "./ActivityList"
+import { DayPicker } from "react-day-picker";
+import { FaSave } from "react-icons/fa";
+import { journalSchema } from "shared";
 
 const daysOfTheWeek = [
     "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
@@ -10,12 +15,48 @@ const daysOfTheWeek = [
 
 function JournalPage() {
     const [date, setDate] = useState(new Date());
-    const [activities, setActivities] = useState([]);
+    const [description, setDescription] = useState("");
     const [mood, setMood] = useState(5);
+    const [activities, setActivities] = useState([]);
+
+    const navigate = useNavigate();
 
     const openDatePickerDialog = () => {
         if (window.innerWidth < 768)   // md or smaller
             document.getElementById('datepicker_modal').showModal()
+    }
+
+    const { mutate: createJournal, isPending } = useMutation({
+        mutationFn: async () => {
+            const request = await fetch("/api/v1/journals", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ date: date.toDateString(), description, mood, activities })
+            });
+            const data = await request.json()
+            if (!request.ok)
+                throw new Error(data.error || "Something went wrong");
+            return data
+        },
+        onSuccess: () => {
+            toast.success("Journal created successfully");
+            navigate("/history");
+        },
+        onError: (error) => {
+            error.issues ?
+                error.issues.forEach(e => toast.error(e.message)) :
+                toast.error(error.message)
+        }
+    });
+
+    const handleSubmit = () => {
+        try {
+            journalSchema.parse({ date, description, mood, activities })
+            createJournal()
+        }
+        catch (error) {
+            error.issues.forEach(e => toast.error(e.message))
+        }
     }
 
     return (
@@ -27,11 +68,19 @@ function JournalPage() {
                         <p className="text-3xl font-medium">{date.getDate()}</p>
                         <p className="text-sm">{daysOfTheWeek[date.getDay()]}</p>
                     </div>
-                    <button className="btn btn-xl btn-square">
-                        <FaSave />
+                    <button className="btn btn-xl btn-square" onClick={handleSubmit} disabled={isPending}>
+                        {isPending ?
+                            <span className="loading loading-spinner loading-md"></span> :
+                            <FaSave />
+                        }
                     </button>
                 </div>
-                <textarea className="flex-1 textarea border-0 focus:outline-0 resize-none w-full p-0" placeholder="Start documenting your day..." />
+                <textarea
+                    className="flex-1 textarea border-0 focus:outline-0 resize-none w-full p-0"
+                    placeholder="Start documenting your day..."
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                />
             </div>
 
             {/* right side: calendar (md & above) + activityList */}

@@ -25,8 +25,7 @@ const ActivityList = ({ activities, setActivities }) => {
         setActivities(prev => prev.filter(a => a !== hoverActivity))
     }
 
-    /* if we have more activites that what can displayed in the view height,
-       scrollbar should be sticked to bottom so the input field always shows */
+    /* if we have more activites than what can displayed in the view height, scrollbar should be sticked to bottom so the input field always shows */
     useEffect(() => {
         listRef.current.scrollTop = listRef.current.scrollHeight
     }, [activities])
