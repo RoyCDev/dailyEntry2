@@ -4,6 +4,7 @@ import RootLayout from "./layout/RootLayout";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage"
 import JournalPage from "./pages/JournalPage/JournalPage";
+import HistoryPage from "./pages/HistoryPage/HistoryPage"
 
 function App() {
     const { data: user, isLoading } = useQuery({
@@ -31,6 +32,7 @@ function App() {
             {user ?
                 <Route path="/" element={<RootLayout user={user} />}>
                     <Route path="journal" element={<JournalPage />} />
+                    <Route path="history" element={<HistoryPage />} />
                     <Route path="*" element={<Navigate to="/" />} />
                 </Route>
                 :

@@ -38,6 +38,21 @@ const getJournal = async (request, response) => {
     }
 }
 
+const getJournalsByMonth = async (request, response) => {
+    const { id: userId } = request.user
+    const { year, month } = request.params
+    const journals = await Journal.find({
+        user: userId,
+        $expr: {
+            $and: [
+                { $eq: [{ $year: "$date" }, year] },
+                { $eq: [{ $month: "$date" }, month] }
+            ]
+        }
+    }).sort("date")
+    return response.status(200).json(journals);
+}
+
 const updateJournal = async (request, response) => {
     const { id: userId } = request.user
     const { id: journalId } = request.params
@@ -84,4 +99,4 @@ const deleteJournal = async (request, response) => {
     }
 }
 
-export { createJournal, getJournal, updateJournal, deleteJournal }
+export { createJournal, getJournal, updateJournal, deleteJournal, getJournalsByMonth }

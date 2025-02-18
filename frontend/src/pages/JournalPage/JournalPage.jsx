@@ -62,7 +62,7 @@ function JournalPage() {
     return (
         <div className="flex flex-col md:flex-row h-screen py-8">
             {/* left side: date + save button + textarea */}
-            <div className="flex-1 flex flex-col px-8 sm:border-r-2 border-base-200">
+            <div className="flex-1 flex flex-col px-8 md:border-r-2 border-base-200">
                 <div className="flex justify-between mb-6">
                     <div className="cursor-pointer md:cursor-default" onClick={openDatePickerDialog} >
                         <p className="text-3xl font-medium">{date.getDate()}</p>
