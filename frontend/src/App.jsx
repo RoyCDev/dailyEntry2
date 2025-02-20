@@ -32,6 +32,7 @@ function App() {
             {user ?
                 <Route path="/" element={<RootLayout user={user} />}>
                     <Route path="journal" element={<JournalPage />} />
+                    <Route path="journal/:year/:month/:day" element={<JournalPage />} />
                     <Route path="history" element={<HistoryPage />} />
                     <Route path="*" element={<Navigate to="/" />} />
                 </Route>

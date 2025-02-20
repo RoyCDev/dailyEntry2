@@ -38,6 +38,31 @@ const getJournal = async (request, response) => {
     }
 }
 
+const getJournalByDate = async (request, response) => {
+    const { id: userId } = request.user
+    const { year, month, day } = request.params
+    try {
+        const journal = await Journal.findOne({
+            user: userId,
+            $expr: {
+                $and: [
+                    { $eq: [{ $year: "$date" }, year] },
+                    { $eq: [{ $month: "$date" }, month] },
+                    { $eq: [{ $dayOfMonth: "$date" }, day] },
+                ]
+            }
+        })
+
+        return journal ?
+            response.status(200).json(journal) :
+            response.status(404).json({ error: "journal not found" })
+
+    } catch (error) {
+        console.log("Error in getJournalByDate controller", error.message)
+        return response.status(500).json({ error: "Internal server error" })
+    }
+}
+
 const getJournalsByMonth = async (request, response) => {
     const { id: userId } = request.user
     const { year, month } = request.params
@@ -99,4 +124,4 @@ const deleteJournal = async (request, response) => {
     }
 }
 
-export { createJournal, getJournal, updateJournal, deleteJournal, getJournalsByMonth }
+export { createJournal, getJournal, updateJournal, deleteJournal, getJournalsByMonth, getJournalByDate }

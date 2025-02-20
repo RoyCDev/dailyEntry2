@@ -1,6 +1,7 @@
 import { moodOptions } from "../../utils/moodOptions";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "react-toastify"
 import DeleteDialog from "../../components/common/DeleteDialog";
@@ -8,6 +9,7 @@ import DeleteDialog from "../../components/common/DeleteDialog";
 function JournalTimeline({ journals }) {
     const [journalToDelete, setJournalToDelete] = useState(null);
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     const { mutate: deleteJournal } = useMutation({
         mutationFn: async (id) => {
@@ -35,6 +37,11 @@ function JournalTimeline({ journals }) {
         setJournalToDelete(journal)
     }
 
+    const viewJournal = (journal) => {
+        const datePath = journal.date.slice(0, 10).replaceAll("-", "/");
+        navigate(`/journal/${datePath}`, { state: journal });
+    }
+
     return (
         <>
             <ul className="timeline timeline-vertical timeline-compact -ml-3">
@@ -58,7 +65,7 @@ function JournalTimeline({ journals }) {
                                         Monday
                                     </div>
                                 </div>
-                                <button className="btn btn-circle btn-sm btn-ghost ml-auto">
+                                <button className="btn btn-circle btn-sm btn-ghost ml-auto" onClick={() => viewJournal(journal)}>
                                     <MdEdit fontSize={18} />
                                 </button>
                                 <button className="btn btn-circle btn-sm btn-ghost" onClick={() => openDeleteDialog(journal)}>
