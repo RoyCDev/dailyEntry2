@@ -68,7 +68,7 @@ function RootLayout({ user }) {
                 <Outlet />
             </div>
             <div className="drawer-side">
-                <ul className="menu bg-base-300 text-base-content min-h-full w-80 p-4 gap-3">
+                <ul className="menu bg-base-300 text-base-content min-h-full w-75 p-4 gap-3">
                     {/* Sidebar content here */}
                     <li>
                         <Link to="/"><Brand /></Link>

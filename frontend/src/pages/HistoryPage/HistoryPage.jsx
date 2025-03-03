@@ -1,7 +1,9 @@
-import { DayPicker } from "react-day-picker"
 import { useQuery } from "@tanstack/react-query"
-import JournalTimeline from "./JournalTimeline";
 import { useState } from "react";
+
+import MonthStats from "./MonthStats";
+import JournalTimeline from "./JournalTimeline";
+import HistorySidebar from "./HistorySidebar";
 
 function HistoryPage() {
     const [monthDate, setMonthDate] = useState(new Date());
@@ -21,40 +23,28 @@ function HistoryPage() {
         },
     });
 
-    const handleMonthChange = (month) => setMonthDate(month);
+    const [selectedActivity, setSelectedActivity] = useState(null);
+    const activityJournals = journals?.filter(j => j.activities.includes(selectedActivity))
 
-    const averageMonthlyMood = journals?.length ?
-        journals.reduce((acc, currJorunal) => acc + currJorunal.mood, 0) / journals.length :
-        0
+    const sidebar =
+        <HistorySidebar
+            journals={journals}
+            monthDate={monthDate}
+            setMonthDate={setMonthDate}
+            selectedActivity={selectedActivity}
+            setSelectedActivity={setSelectedActivity}
+        />
 
     return (
-        <div className="flex flex-col md:flex-row min-h-screen py-8 overflow-scroll">
+        <div className="flex flex-col md:flex-row min-h-screen py-8">
             {/* left side */}
-            <div className="flex-1 px-8 md:border-r-2 border-base-200">
-                <div className="text-xl font-semibold">
-                    {displayMonth}
-                </div>
-
-                {/* <div className="stats">
-                    <div className="stat">
-                        <div className="stat-value">{journals.length}</div>
-                        <div className="stat-title">Journals</div>
-                    </div>
-                    <div className="stat">
-                        <div className="stat-value">{averageMonthlyMood.toFixed(2)}
-                            <span className="text-sm">/5</span>
-                        </div>
-                        <div className="stat-title">Avg Mood Raing</div>
-                    </div>
-                </div> */}
-                {!isLoading && <JournalTimeline journals={journals} />}
+            <div className="flex-1 px-8 md:border-r-2 border-base-200 min-w-0">
+                <MonthStats journals={journals} monthDate={monthDate} />
+                {!isLoading && <JournalTimeline journals={selectedActivity ? activityJournals : journals} />}
             </div>
 
             {/* right side: calendar (md & above) */}
-            <div className="w-67 mx-5 -mt-3">
-                <DayPicker className="react-day-picker border-0 hidden md:block" mode="single" onPrevClick={handleMonthChange} onNextClick={handleMonthChange} />
-                hi
-            </div>
+            <div className="w-67 mx-5 -mt-3">{sidebar}</div>
         </div>
     )
 }

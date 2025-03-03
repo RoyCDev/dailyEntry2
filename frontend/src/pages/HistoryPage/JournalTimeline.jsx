@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "react-toastify"
 import DeleteDialog from "../../components/common/DeleteDialog";
+import { daysOfTheWeek } from "../../utils/util";
 
 function JournalTimeline({ journals }) {
     const [journalToDelete, setJournalToDelete] = useState(null);
@@ -62,7 +63,7 @@ function JournalTimeline({ journals }) {
                                         {journal.date.slice(8, 10)}
                                     </div>
                                     <div className="text-xs opacity-60 -mt-0.5">
-                                        Monday
+                                        {daysOfTheWeek[new Date(journal.date).getDay()]}
                                     </div>
                                 </div>
                                 <button className="btn btn-circle btn-sm btn-ghost ml-auto" onClick={() => viewJournal(journal)}>

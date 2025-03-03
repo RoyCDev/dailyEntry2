@@ -8,10 +8,8 @@ import ActivityList from "./ActivityList"
 import { DayPicker } from "react-day-picker";
 import { FaSave } from "react-icons/fa";
 import { journalSchema } from "shared";
+import { daysOfTheWeek } from "../../utils/util";
 
-const daysOfTheWeek = [
-    "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
-]
 /*  Users can access this page in 3 ways:
     1. directly from url: /journal/yyyy/mm/dd -> fetch journal for that date
     2. clicked edit button from historyPage -> journalToEdit
